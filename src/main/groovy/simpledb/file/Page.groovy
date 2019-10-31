@@ -10,12 +10,7 @@ class Page {
     static final int SIZE = 400
     static final int INT_SIZE = 4
     static final Charset CHARSET = StandardCharsets.UTF_8
-    static final int MAX_CHAR_BYTE = (int) CHARSET.newEncoder().maxBytesPerChar()
     
-    static final int strSize(final int n) {
-        return INT_SIZE + (n * MAX_CHAR_BYTE)
-    }
-
     final FileManager fileManager
     
     protected Page(final FileManager fileManager) {
@@ -58,6 +53,12 @@ class Page {
         return new String(bytes, CHARSET)
     }
 
+    @Synchronized
+    int getStringLength(final int offset) {
+        return INT_SIZE + contents.getInt(offset)
+    }
+
+    @Synchronized
     void setString(final int offset, final String val) {
         byte[] bytes = val.getBytes(CHARSET)
         contents.position(offset)
