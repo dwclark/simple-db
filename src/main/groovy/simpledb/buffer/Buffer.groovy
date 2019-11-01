@@ -17,7 +17,7 @@ class Buffer {
     Buffer(final FileManager fileManager, final LogManager logManager) {
         this.logManager = logManager
         contents = fileManager.newPage()
-        block = null
+        block = Block.unassigned()
         pins = 0
         modifiedBy = -1
     }
