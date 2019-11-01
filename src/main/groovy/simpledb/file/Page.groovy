@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets
 
 @CompileStatic
 class Page {
-    static final int SIZE = 400
     static final int INT_SIZE = 4
     static final Charset CHARSET = StandardCharsets.UTF_8
     
@@ -17,7 +16,7 @@ class Page {
         this.fileManager = fileManager
     }
 
-    private ByteBuffer contents = ByteBuffer.allocateDirect(SIZE)
+    private ByteBuffer contents = ByteBuffer.allocateDirect(fileManager.pageSize)
 
     @Synchronized
     void read(final Block block) {

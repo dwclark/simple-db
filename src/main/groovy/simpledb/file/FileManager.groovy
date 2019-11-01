@@ -11,9 +11,11 @@ import java.util.function.BiFunction
 class FileManager {
     final File directory
     final boolean isNew
+    final int pageSize
     private ConcurrentHashMap<String,FileChannel> openFiles = new ConcurrentHashMap<>();
 
-    FileManager(final String base, final String name) {
+    FileManager(final String base, final String name, final int pageSize) {
+        this.pageSize = pageSize
         directory = new File(base, name)
         isNew = !directory.exists()
 
@@ -65,7 +67,7 @@ class FileManager {
     }
 
     private int _size(final FileChannel channel) {
-        return (int) (channel.size() / Page.SIZE)
+        return (int) (channel.size() / pageSize)
     }
 
     private FileChannel createChannel(final String fileName) {

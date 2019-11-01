@@ -52,7 +52,7 @@ class LogManager implements Iterable<BasicLogRecord> {
         int totalSize = Page.INT_SIZE
         rec.each { o -> totalSize += Page.length(o) }
 
-        if(currentPosition + totalSize >= Page.SIZE) {
+        if(currentPosition + totalSize >= fileManager.pageSize) {
             _flush()
             _block()
         }

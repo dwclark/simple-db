@@ -45,7 +45,7 @@ class LogManagerSpec extends Specification {
         setup:
         def builder = new Config.Builder(databaseName: 'test_file_size',
                                          databaseDirectory: tempFolder.root.path,
-                                         logName: 'theLog.log')
+                                         logName: 'theLog.log', pageSize: 400)
         def server = new Server(builder.config())
         def logManager = server.logManager
         def strings = (0..<10).collect { RandomStringUtils.randomAlphabetic(100) }
@@ -56,7 +56,7 @@ class LogManagerSpec extends Specification {
         expect:
         strings.reverse().every { str -> str == iter.next().nextString() }
         file.exists()
-        file.length() == Page.SIZE * 4
+        file.length() == server.config.pageSize * 4
     }
 
     def 'test ints and strings'() {

@@ -10,25 +10,25 @@ import java.util.concurrent.TimeUnit
 
 @CompileStatic
 class BufferManager {
-    private static final long TOO_LONG = 10_000L
-
     final FileManager fileManager
     final LogManager logManager
-
+    final long maxWait
+    
     private final Lock lock
     private final Condition condition
     
     private LRUMap<Block,Buffer> pool
-    private int available
+    private int _available
     
     BufferManager(final FileManager fileManager, final LogManager logManager,
-                  final int max) {
+                  final int maxBuffers, final long maxWait) {
         this.fileManager = fileManager
         this.logManager = logManager
+        this.maxWait = maxWait
         
-        pool = new LRUMap(max, max, 0.75f)
-        available = max
-        for(int i = 0; i < max; ++i) {
+        pool = new LRUMap(maxBuffers, maxBuffers, 0.75f)
+        _available = maxBuffers
+        for(int i = 0; i < maxBuffers; ++i) {
             Buffer buf = new Buffer(fileManager, logManager)
             pool.put(buf.block, buf)
         }
@@ -59,14 +59,14 @@ class BufferManager {
         withLock {
             _unpin(buffer)
             if(!buffer.pinned) {
-                notifyAll()
+                condition.signalAll()
             }
         }
     }
 
-    public int available() {
+    public int getAvailable() {
         int ret
-        withLock { ret = available }
+        withLock { ret = _available }
         return ret
     }
 
@@ -90,21 +90,21 @@ class BufferManager {
             long timestamp = System.currentTimeMillis()
             buffer = closure.call()
             while(buffer == null && !tooLong(timestamp)) {
-                condition.await(TOO_LONG, TimeUnit.MILLISECONDS)
+                condition.await(maxWait, TimeUnit.MILLISECONDS)
                 buffer = closure.call()
             }
             
             if(buffer == null) {
                 throw new BufferAbortException()
             }
-
-            return buffer
         }
+
+        return buffer
     }
 
     private boolean tooLong(final long start) {
         final long now = System.currentTimeMillis()
-        return now - start > TOO_LONG
+        return now - start > maxWait
     }
 
     private Buffer _pin(final Block block) {
@@ -120,7 +120,7 @@ class BufferManager {
         }
 
         if(!buffer.pinned) {
-            --available
+            --_available
         }
 
         buffer.pin()
@@ -135,7 +135,7 @@ class BufferManager {
 
         buffer.assign(fileName, formatter)
         pool.put(buffer.block, buffer)
-        --available
+        --_available
         buffer.pin()
         return buffer
     }
@@ -143,7 +143,7 @@ class BufferManager {
     void _unpin(final Buffer buffer) {
         buffer.unpin()
         if(!buffer.pinned) {
-            --available
+            ++_available
         }
     }
 
@@ -152,8 +152,9 @@ class BufferManager {
         while(iter.hasNext()) {
             Map.Entry<Block,Buffer> entry = iter.next()
             if(!entry.value.pinned) {
+                Buffer buffer = entry.value
                 iter.remove()
-                return entry.value
+                return buffer
             }
         }
 
