@@ -9,8 +9,10 @@ repositories {
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.5.8'
     testCompile "org.spockframework:spock-core:1.3-groovy-2.5"
+    testCompile "org.apache.commons:commons-lang3:3.9"
 }
 
 test {
     systemProperty 'simple.db.dir', '/home/david/tmp/simpledb'
+    systemProperty 'simple.db.log.name', 'theLog.log'
 }

@@ -9,7 +9,7 @@ import java.util.function.BiFunction
 
 @CompileStatic
 class FileManager {
-    private final File directory
+    final File directory
     final boolean isNew
     private ConcurrentHashMap<String,FileChannel> openFiles = new ConcurrentHashMap<>();
 
@@ -33,12 +33,13 @@ class FileManager {
             FileChannel channel = (existing == null) ? createChannel(fileName) : existing
             buf.clear()
             channel.read(buf, block.number * buf.capacity())
+            return channel
         } as BiFunction
     }
 
     void write(final Block block, final ByteBuffer buf) {
         openFiles.compute(block.fileName) { String fileName, FileChannel existing ->
-            _write((existing == null) ? createChannel(fileName) : existing, block, buf)
+            return _write((existing == null) ? createChannel(fileName) : existing, block, buf)
         } as BiFunction
     }
 
@@ -47,7 +48,7 @@ class FileManager {
         openFiles.compute(fileName) { String arg, FileChannel existing ->
             FileChannel channel = (existing == null) ? createChannel(fileName) : existing
             block = new Block(fileName, _size(channel))
-            _write(channel, block, buf)
+            return _write(channel, block, buf)
         } as BiFunction
 
         return block
@@ -57,9 +58,10 @@ class FileManager {
         return _size(openFiles.computeIfAbsent(fileName, this.&createChannel))
     }
 
-    private void _write(final FileChannel channel, final Block block, final ByteBuffer buf) {
+    private FileChannel _write(final FileChannel channel, final Block block, final ByteBuffer buf) {
         buf.rewind()
         channel.write(buf, block.number * buf.capacity())
+        return channel
     }
 
     private int _size(final FileChannel channel) {
