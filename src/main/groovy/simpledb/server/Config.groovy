@@ -12,6 +12,7 @@ class Config {
     final int pageSize
     final int maxBuffers
     final long maxBufferWait
+    final long maxLockWait
     
     private Config(final Builder builder) {
         databaseName = builder.databaseName
@@ -20,6 +21,7 @@ class Config {
         pageSize = builder.pageSize
         maxBuffers = builder.maxBuffers
         maxBufferWait = builder.maxBufferWait
+        maxLockWait = builder.maxLockWait
     }
     
     static class Builder {
@@ -30,6 +32,7 @@ class Config {
         int pageSize = extractInt('simple.db.page.size', 512)
         int maxBuffers = extractInt('simple.db.max.buffers', 512)
         long maxBufferWait = extractLong('simple.db.max.buffer.wait', 10_000L)
+        long maxLockWait = extractLong('simple.db.max.lock.wait', 10_000L)
         
         Config config() {
             return new Config(this)
