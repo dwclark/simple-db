@@ -47,15 +47,25 @@ class BufferManager {
         }
     }
 
-    public Buffer pin(final Block block) {
+    void withBuffer(final Block block, final Closure<Buffer> closure) {
+        final Buffer buffer = pin(block)
+        try {
+            closure.call(buffer)
+        }
+        finally {
+            unpin(buffer)
+        }
+    }
+
+    Buffer pin(final Block block) {
         return withWait(this.&_pin.curry(block))
     }
 
-    public Buffer pin(final String fileName, final PageFormatter formatter){
+    Buffer pin(final String fileName, final PageFormatter formatter){
         return withWait(this.&_pinNew.curry(fileName, formatter))
     }
 
-    public void unpin(final Buffer buffer) {
+    void unpin(final Buffer buffer) {
         withLock {
             _unpin(buffer)
             if(!buffer.pinned) {
@@ -64,7 +74,7 @@ class BufferManager {
         }
     }
 
-    public int getAvailable() {
+    int getAvailable() {
         int ret
         withLock { ret = _available }
         return ret
@@ -140,7 +150,7 @@ class BufferManager {
         return buffer
     }
 
-    void _unpin(final Buffer buffer) {
+    private void _unpin(final Buffer buffer) {
         buffer.unpin()
         if(!buffer.pinned) {
             ++_available
