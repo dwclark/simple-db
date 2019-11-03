@@ -21,4 +21,12 @@ class Block {
     static Block unassigned() {
         return new Block(UNASSIGNED, unassignedCounter.incrementAndGet())
     }
+
+    boolean isTemporary() {
+        return fileName.startsWith('temp')
+    }
+
+    static Block dummy(final String fileName) {
+        return new Block(fileName, -1)
+    }
 }

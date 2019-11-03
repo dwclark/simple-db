@@ -47,7 +47,7 @@ class BufferManager {
         }
     }
 
-    void withBuffer(final Block block, final Closure<Buffer> closure) {
+    void withBuffer(final Block block, final Closure closure) {
         final Buffer buffer = pin(block)
         try {
             closure.call(buffer)

@@ -41,9 +41,9 @@ class SetStringRecord implements LogRecord {
     }
         
     void undo(final BufferManager bufferManager, final int txNumber) {
-        final Buffer buffer = bufferManager.pin(block)
-        buffer.setString(offset, val, txNumber, -1)
-        bufferManager.unpin(buffer)
+        bufferManager.withBuffer(block) { Buffer buffer ->
+            buffer.setString(offset, val, txNumber, -1)
+        }
     }
 }
 
@@ -79,9 +79,9 @@ class SetIntRecord implements LogRecord {
     }
         
     void undo(final BufferManager bufferManager, final int txNumber) {
-        final Buffer buffer = bufferManager.pin(block)
-        buffer.setInt(offset, val, txNumber, -1)
-        bufferManager.unpin(buffer)
+        bufferManager.withBuffer(block) { Buffer buffer ->
+            buffer.setInt(offset, val, txNumber, -1)
+        }
     }
 }
 
