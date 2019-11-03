@@ -7,31 +7,31 @@ import simpledb.file.Block
 class ConcurrencyManager {
 
     final LockTable lockTable
-    final int txId
+    final int txNumber
     private final Map<Block,LockType> locks
     
-    ConcurrencyManager(final LockTable lockTable, final int txId) {
+    ConcurrencyManager(final int txNumber, final LockTable lockTable) {
         this.lockTable = lockTable
-        this.txId = txId
+        this.txNumber = txNumber
         locks = [:]
     }
 
     void sharedLock(final Block block) {
         if(!locks.containsKey(block)) {
-            lockTable.sharedLock(block, txId)
+            lockTable.sharedLock(block, txNumber)
             locks.put(block, LockType.S)
         }
     }
 
     void exclusiveLock(final Block block) {
         if(!LockType.X.equals(locks.get(block))) {
-            lockTable.exclusiveLock(block, txId)
+            lockTable.exclusiveLock(block, txNumber)
             locks.put(block, LockType.X)
         }
     }
 
     void release() {
-        locks.keySet().each { Block block -> lockTable.unlock(block, txId) }
+        locks.keySet().each { Block block -> lockTable.unlock(block, txNumber) }
         locks.clear()
     }
 }

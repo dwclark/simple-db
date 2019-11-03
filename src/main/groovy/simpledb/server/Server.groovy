@@ -5,6 +5,7 @@ import simpledb.file.FileManager
 import simpledb.log.LogManager
 import simpledb.buffer.BufferManager
 import simpledb.tx.concurrency.LockTable
+import simpledb.tx.Transaction
 
 @CompileStatic
 class Server {
@@ -24,5 +25,9 @@ class Server {
 
     Server() {
         this(new Config.Builder().config())
+    }
+
+    Transaction newTransaction() {
+        return new Transaction(bufferManager, logManager, lockTable)
     }
 }

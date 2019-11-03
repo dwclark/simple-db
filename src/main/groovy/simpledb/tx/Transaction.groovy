@@ -8,18 +8,21 @@ import simpledb.log.LogManager
 import simpledb.buffer.*
 import simpledb.file.Block
 
+@CompileStatic
 class Transaction {
     private static final AtomicInteger txCounter = new AtomicInteger()
 
-    private RecoveryManager recoveryMangaer
+    private BufferManager bufferManager
+    private RecoveryManager recoveryManager
     private ConcurrencyManager concurrencyManager
     private int txNumber
     private BufferList bufferList
 
     Transaction(final BufferManager bufferManager, final LogManager logManager, final LockTable lockTable) {
         this.txNumber = txCounter.incrementAndGet()
+        this.bufferManager = bufferManager
         this.recoveryManager = new RecoveryManager(txNumber, logManager, bufferManager)
-        this.concurrencyManager = new ConcurrencyManager(lockTable)
+        this.concurrencyManager = new ConcurrencyManager(txNumber, lockTable)
         this.bufferList = new BufferList(bufferManager)
     }
 
@@ -39,6 +42,7 @@ class Transaction {
 
     void recover() {
         recover()
+        println "Finished recovery"
     }
 
     void pin(final Block block) {

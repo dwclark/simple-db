@@ -22,20 +22,20 @@ class LockTable {
         exclusiveLocks = [:]
     }
 
-    void sharedLock(final Block block, final int txId) {
-        withWait(block, txId, this.&canShareLock, this.&grabShared) 
+    void sharedLock(final Block block, final int txNumber) {
+        withWait(block, txNumber, this.&canShareLock, this.&grabShared) 
     }
 
-    void exclusiveLock(final Block block, final int txId) {
-        withWait(block, txId, this.&canExclusivelyLock, exclusiveLocks.&put)
+    void exclusiveLock(final Block block, final int txNumber) {
+        withWait(block, txNumber, this.&canExclusivelyLock, exclusiveLocks.&put)
     }
 
-    void unlock(final Block block, final int txId) {
+    void unlock(final Block block, final int txNumber) {
         withLock {
             exclusiveLocks.remove(block)
             final Set<Integer> txs = sharedLocks.get(block)
             if(txs != null) {
-                txs.remove(txId)
+                txs.remove(txNumber)
             }
         }
     }
@@ -53,47 +53,46 @@ class LockTable {
         }
     }
 
-    private void withWait(final Block block, final Integer txId,
+    private void withWait(final Block block, final Integer txNumber,
                           final Closure<Boolean> doTest, final Closure doLock) {
         withLock {
             long timestamp = System.currentTimeMillis()
-            while(doTest.call(block) && !tooLong(timestamp)) {
+            while(!doTest.call(block, txNumber) && !tooLong(timestamp)) {
                 condition.await(maxWait, TimeUnit.MILLISECONDS)
             }
 
-            if(doTest.call(block)) {
+            if(!doTest.call(block, txNumber)) {
                 throw new LockAbortException()
             }
 
-            doLock.call(block)
+            doLock.call(block, txNumber)
         }
     }
 
-    private boolean canShareLock(final Block block, final Integer txId) {
+    private boolean canShareLock(final Block block, final Integer txNumber) {
         final Integer owner = exclusiveLocks.get(block)
-        return (owner == null || owner == txId)
+        return (owner == null || owner == txNumber)
     }
 
-    private void grabShared(final Block block, final Integer txId) {
+    private void grabShared(final Block block, final Integer txNumber) {
         Set<Integer> txs = sharedLocks.get(block)
         if(txs == null) {
             txs = new HashSet<>()
             sharedLocks.put(block, txs)
         }
 
-        txs.add(txId)
+        txs.add(txNumber)
     }
 
-    private boolean canExclusivelyLock(final Block block, final Integer txId) {
+    private boolean canExclusivelyLock(final Block block, final Integer txNumber) {
         final Set<Integer> txs = sharedLocks.get(block)
         return (txs == null ||
                 txs.size() == 0 ||
-                txs.size() == 1 && txs.iterator().next() == txId)
+                txs.size() == 1 && txs.iterator().next() == txNumber)
     }
 
     private boolean tooLong(final long start) {
         final long now = System.currentTimeMillis()
         return now - start > maxWait
     }
-
 }

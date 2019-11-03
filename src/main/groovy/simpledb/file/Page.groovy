@@ -84,14 +84,14 @@ class Page {
             return INT_SIZE
         }
         else if(o instanceof CharSequence) {
-            return length((CharSequence) o)
+            return INT_SIZE + byteLength((CharSequence) o)
         }
         else {
             throw new IllegalArgumentException("Can't determine serialized length of ${o.getClass()}")
         }
     }
 
-    static int length(final CharSequence cs) {
+    static int byteLength(final CharSequence cs) {
         int count = 0
         final int len = cs.length()
         for(int i = 0; i < len; i++) {
