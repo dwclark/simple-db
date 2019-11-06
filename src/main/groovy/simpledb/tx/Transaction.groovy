@@ -12,11 +12,11 @@ import simpledb.file.Block
 class Transaction {
     private static final AtomicInteger txCounter = new AtomicInteger()
 
-    private BufferManager bufferManager
-    private RecoveryManager recoveryManager
-    private ConcurrencyManager concurrencyManager
-    private int txNumber
-    private BufferList bufferList
+    final BufferManager bufferManager
+    private final RecoveryManager recoveryManager
+    private final ConcurrencyManager concurrencyManager
+    private final int txNumber
+    private final BufferList bufferList
 
     Transaction(final BufferManager bufferManager, final LogManager logManager, final LockTable lockTable) {
         this.txNumber = txCounter.incrementAndGet()
