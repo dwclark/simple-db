@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets
 @CompileStatic
 class Page {
     static final int INT_SIZE = 4
-    static final Charset CHARSET = StandardCharsets.UTF_8
+    static final Charset CHARSET = StandardCharsets.US_ASCII
     
     final FileManager fileManager
     
@@ -91,6 +91,11 @@ class Page {
         }
     }
 
+    static int varcharLength(final int num) {
+        return INT_SIZE + num
+    }
+
+    //leave in place for now. 
     static int byteLength(final CharSequence cs) {
         int count = 0
         final int len = cs.length()
