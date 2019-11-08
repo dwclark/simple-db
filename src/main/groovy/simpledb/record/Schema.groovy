@@ -18,11 +18,11 @@ class Field {
         this.length = length
     }
 
-    Field newInt(final String name) {
+    static Field newInt(final String name) {
         return new Field(name, Types.INTEGER, 0)
     }
 
-    Field newString(final String name, final int length) {
+    static Field newString(final String name, final int length) {
         return new Field(name, Types.VARCHAR, length)
     }
 }
@@ -95,6 +95,11 @@ class TableInfo {
     }
 
     int offset(final fieldName) {
-        return offsets.get(fieldName)
+        final Integer off = offsets.get(fieldName)
+        if(off == null) {
+            throw new UnknownFieldException("${fieldName} is not found")
+        }
+
+        return off.intValue()
     }
 }
