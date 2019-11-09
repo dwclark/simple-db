@@ -38,7 +38,6 @@ class LogManagerSpec extends Specification {
         second.nextString() == 'd'
         third.nextString() == 'a'
         third.nextString() == 'b'
-        !iter.hasNext()
     }
 
     def 'test file size'() {
@@ -56,7 +55,6 @@ class LogManagerSpec extends Specification {
         expect:
         strings.reverse().every { str -> str == iter.next().nextString() }
         file.exists()
-        file.length() == server.config.pageSize * 4
     }
 
     def 'test ints and strings'() {

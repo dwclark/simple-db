@@ -13,6 +13,7 @@ class Config {
     final int maxBuffers
     final long maxBufferWait
     final long maxLockWait
+    final boolean useMetadata
     
     private Config(final Builder builder) {
         databaseName = builder.databaseName
@@ -22,6 +23,7 @@ class Config {
         maxBuffers = builder.maxBuffers
         maxBufferWait = builder.maxBufferWait
         maxLockWait = builder.maxLockWait
+        useMetadata = builder.useMetadata
     }
     
     static class Builder {
@@ -33,6 +35,7 @@ class Config {
         int maxBuffers = extractInt('simple.db.max.buffers', 512)
         long maxBufferWait = extractLong('simple.db.max.buffer.wait', 10_000L)
         long maxLockWait = extractLong('simple.db.max.lock.wait', 10_000L)
+        boolean useMetadata = extractBoolean('simple.db.use.metadata', true)
         
         Config config() {
             return new Config(this)
@@ -59,6 +62,15 @@ class Config {
         private int extractLong(final String name, final long defaultValue) {
             if(System.properties.containsKey(name)) {
                 return System.getProperty(name).toLong()
+            }
+            else {
+                return defaultValue
+            }
+        }
+
+        private boolean extractBoolean(final String name, final boolean defaultValue) {
+            if(System.properties.containsKey(name)) {
+                return System.getProperty(name).toBoolean()
             }
             else {
                 return defaultValue

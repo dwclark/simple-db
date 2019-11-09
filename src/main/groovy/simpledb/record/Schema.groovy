@@ -12,7 +12,7 @@ class Field {
     final int type
     final int length
 
-    private Field(final String name, final int type, final int length) {
+    public Field(final String name, final int type, final int length) {
         this.name = name
         this.type = type
         this.length = length
@@ -78,7 +78,7 @@ class TableInfo {
             }
         }
 
-        this.offsets = Collections.unmodifiableMap(tmp)
+        this.offsets = tmp.asImmutable()
         this.recordLength = pos
     }
 
@@ -86,7 +86,7 @@ class TableInfo {
               final Map<String,Integer> offsets, final int recordLength) {
         this.tableName = tableName
         this.schema = schema
-        this.offsets = offsets
+        this.offsets = offsets.asImmutable()
         this.recordLength = recordLength
     }
 
@@ -101,5 +101,22 @@ class TableInfo {
         }
 
         return off.intValue()
+    }
+}
+
+@CompileStatic
+@ToString(includePackage=false, includeNames=true)
+@EqualsAndHashCode
+class StatisticsInfo {
+    final int numberBlocks
+    final int numberRecords
+
+    StatisticsInfo(final int numberBlocks, final int numberRecords) {
+        this.numberBlocks = numberBlocks
+        this.numberRecords = numberRecords
+    }
+
+    int distinctValues(final String fieldName) {
+        return 1 + (int) (numberRecords / 3)
     }
 }

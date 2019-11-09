@@ -52,7 +52,8 @@ class BufferManagerSpec extends Specification {
     def 'test wait for buffer'() {
         setup:
         def builder = new Config.Builder(databaseName: 'wait_for_buffer', maxBuffers: 1,
-                                         databaseDirectory: tempFolder.root.path)
+                                         databaseDirectory: tempFolder.root.path,
+                                         useMetadata: false)
         def server = new Server(builder.config())
         def bufferManager = server.bufferManager
         def txId = 1
@@ -70,7 +71,7 @@ class BufferManagerSpec extends Specification {
             def myBlock = new Block('foo', 1)
             def myBuffer = bufferManager.pin(myBlock)
             myBuffer.setString(0, 'scooby doo again', txId, 1)
-            myBuffer.unpin(myBlock)
+            bufferManager.unpin(myBuffer)
         }
 
         sleep(1_000)
