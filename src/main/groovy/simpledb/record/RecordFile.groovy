@@ -24,6 +24,10 @@ class RecordFile {
         moveTo(0)
     }
 
+    boolean hasField(final String fieldName) {
+        return tableInfo.schema.hasField(fieldName)
+    }
+
     void beforeFirst() {
         moveTo(0)
     }

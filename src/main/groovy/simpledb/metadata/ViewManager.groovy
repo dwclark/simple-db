@@ -17,11 +17,8 @@ class ViewManager {
     ViewManager(final boolean isNew, final TableManager tableManager, final Transaction tx) {
         this.tableManager = tableManager
         if(isNew) {
-            Schema schema = new Schema().tap {
-                add Field.newString(VIEW_NAME, TableManager.MAX_NAME)
-                add Field.newString(VIEW_DEFINITION, MAX_DEFINITION)
-            }
-
+            Schema schema = Schema.fromFields([Field.newString(VIEW_NAME, TableManager.MAX_NAME),
+                                               Field.newString(VIEW_DEFINITION, MAX_DEFINITION)])
             tableManager.createTable(VIEW_CATALOG, schema, tx)
         }
     }

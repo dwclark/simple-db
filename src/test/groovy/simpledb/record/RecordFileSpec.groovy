@@ -17,8 +17,7 @@ class RecordFileSpec extends Specification {
     def tableInfo
 
     def setup() {
-        schema = new Schema()
-        schema.add(Field.newInt("A"))
+        schema = Schema.fromFields([Field.newInt("A")])
         tableInfo = new TableInfo("junk", schema)
     }
 

@@ -29,26 +29,36 @@ class Field {
 
 @CompileStatic
 class Schema {
-    private final Map<String,Field> _fields = [:]
+    private final Map<String,Field> _fields;
 
-    void add(final Field field) {
-        _fields[field.name] = field
+    private Schema(final Collection<Field> list) {
+        Map<String,Field> tmp = [:]
+        list.each { Field field -> tmp[field.name] = field }
+        _fields = tmp.asImmutable()
+    }
+    
+    static Schema fromSchemas(final Collection<Schema> list) {
+        return new Schema(list.collect { Schema s -> s.fields }.flatten() as Collection<Field>)
     }
 
-    void addAll(final Schema s) {
-        _fields.putAll(s._fields)
+    static Schema fromFields(final Collection<Field> list) {
+        return new Schema(list)
     }
-
+    
     Field field(final String name) {
         return _fields[name]
     }
 
-    Collection<String> getFieldNames() {
+    Set<String> getFieldNames() {
         return _fields.keySet()
     }
 
     Collection<Field> getFields() {
         return _fields.values()
+    }
+
+    boolean hasField(final String fieldName) {
+        return _fields.containsKey(fieldName)
     }
 }
 

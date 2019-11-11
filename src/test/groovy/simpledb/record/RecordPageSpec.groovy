@@ -17,9 +17,7 @@ class RecordPageSpec extends Specification {
     def tableInfo
 
     def setup() {
-        schema = new Schema()
-        schema.add(Field.newInt("id"))
-        schema.add(Field.newString("name", 10))
+        schema = Schema.fromFields([Field.newInt("id"), Field.newString("name", 10)])
         tableInfo = new TableInfo("students", schema)
     }
 

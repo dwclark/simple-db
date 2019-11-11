@@ -1,4 +1,4 @@
-package simpledb.log
+package simpledb.buffer
 
 import spock.lang.*
 import org.junit.rules.TemporaryFolder

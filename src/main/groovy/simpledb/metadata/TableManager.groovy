@@ -20,20 +20,15 @@ class TableManager {
     private TableInfo fields
 
     TableManager(final boolean isNew, final Transaction tx) {
-        Schema tableSchema = new Schema().tap {
-            add Field.newString(TABLE_NAME, MAX_NAME)
-            add Field.newInt(RECORD_LENGTH)
-        }
-        
+        Schema tableSchema = Schema.fromFields([Field.newString(TABLE_NAME, MAX_NAME),
+                                                Field.newInt(RECORD_LENGTH)])
         tables = new TableInfo(TABLE_CATALOG, tableSchema)
-
-        Schema fieldSchema = new Schema().tap {
-            add Field.newString(TABLE_NAME, MAX_NAME)
-            add Field.newString(FIELD_NAME, MAX_NAME)
-            add Field.newInt(TYPE)
-            add Field.newInt(LENGTH)
-            add Field.newInt(OFFSET)
-        }
+        
+        Schema fieldSchema = Schema.fromFields([Field.newString(TABLE_NAME, MAX_NAME),
+                                                Field.newString(FIELD_NAME, MAX_NAME),
+                                                Field.newInt(TYPE),
+                                                Field.newInt(LENGTH),
+                                                Field.newInt(OFFSET)])
 
         fields = new TableInfo(FIELD_CATALOG, fieldSchema)
 
@@ -79,20 +74,20 @@ class TableManager {
             close()
         }
 
-        Schema schema = new Schema()
+        List<Field> tmp = []
         Map<String,Integer> offsets = new LinkedHashMap<>()
         new RecordFile(fields, tx).with {
             while(next()) {
                 if(getString(TABLE_NAME) == tableName) {
                     Field field = new Field(getString(FIELD_NAME), getInt(TYPE), getInt(LENGTH))
                     offsets[field.name] = getInt(OFFSET)
-                    schema.add(field)
+                    tmp << field
                 }
             }
 
             close()
         }
 
-        return new TableInfo(tableName, schema, offsets, recordLength)
+        return new TableInfo(tableName, Schema.fromFields(tmp), offsets, recordLength)
     }
 }

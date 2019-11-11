@@ -9,13 +9,10 @@ import org.apache.commons.lang3.RandomUtils
 import simpledb.file.*
 import simpledb.record.*
 
-class BufferManagerSpec extends Specification {
+class MetadataManagerSpec extends Specification {
 
     @Rule TemporaryFolder tempFolder
-    def schema = new Schema().tap {
-        add Field.newInt('id')
-        add Field.newString('name', 20)
-    }
+    def schema = Schema.fromFields([Field.newInt('id'), Field.newString('name', 20)])
     
     def createStudents(def server) {
         def metadata = server.metadataManager
