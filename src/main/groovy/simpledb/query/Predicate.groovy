@@ -1,25 +1,22 @@
 package simpledb.query
 
 import groovy.transform.CompileStatic
+import groovy.transform.Immutable
 import groovy.transform.ToString
 import simpledb.plan.Plan
 
+@Immutable
 @CompileStatic @ToString(includeNames=true, includePackage=false)
 class Predicate implements java.util.function.Predicate<Scan> {
 
-    private final List<Term> terms
+    final static Predicate EMPTY = new Predicate([])
+    
+    List<Term> terms
 
-    Predicate() {
-        terms = []
-    }
-
-    Predicate(Term term) {
-        this()
-        terms.add(term)
-    }
-
-    void conjoinWith(final Predicate p) {
-        terms.addAll(p.terms)
+    Predicate conjoinWith(final Predicate p) {
+        List<Term> copy = new ArrayList<>(terms)
+        copy.addAll(p.terms)
+        return new Predicate(copy)
     }
     
     boolean test(final Scan s) {

@@ -1,14 +1,11 @@
 package simpledb.query
 
 import groovy.transform.CompileStatic
+import groovy.transform.Immutable
 
-@CompileStatic
+@Immutable @CompileStatic
 class StringConstant implements Constant {
-    final String val
-
-    StringConstant(final String val) {
-        this.val = val
-    }
+    String val
 
     @Override
     boolean equals(final Object o) {

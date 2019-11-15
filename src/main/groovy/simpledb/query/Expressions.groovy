@@ -1,12 +1,12 @@
 package simpledb.query
 
 import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
+import groovy.transform.Immutable
 import simpledb.record.Schema
 
-@CompileStatic @TupleConstructor
+@CompileStatic @Immutable
 class ConstantExpression implements Expression {
-    final Constant val;
+    Constant val;
     boolean isConstant() { true }
     boolean isFieldName() { false }
     Constant asConstant() { val }
@@ -16,9 +16,9 @@ class ConstantExpression implements Expression {
     @Override String toString() { val.toString() }
 }
 
-@CompileStatic @TupleConstructor
+@CompileStatic @Immutable
 class FieldNameExpression implements Expression {
-    final String fieldName
+    String fieldName
     boolean isConstant() { false }
     boolean isFieldName() { true }
     Constant asConstant() { throw new ClassCastException()}

@@ -6,17 +6,10 @@ import simpledb.file.Page
 
 @CompileStatic
 @ToString(includePackage=false, includeNames=true)
-@EqualsAndHashCode
+@Immutable
 class Field {
-    final String name
-    final int type
-    final int length
-
-    public Field(final String name, final int type, final int length) {
-        this.name = name
-        this.type = type
-        this.length = length
-    }
+    String name
+    int type, length
 
     static Field newInt(final String name) {
         return new Field(name, Types.INTEGER, 0)
@@ -27,22 +20,16 @@ class Field {
     }
 }
 
-@CompileStatic
+@CompileStatic @Immutable
 class Schema {
-    private final Map<String,Field> _fields;
+    Map<String,Field> _fields;
 
-    private Schema(final Collection<Field> list) {
-        Map<String,Field> tmp = [:]
-        list.each { Field field -> tmp[field.name] = field }
-        _fields = tmp.asImmutable()
-    }
-    
     static Schema fromSchemas(final Collection<Schema> list) {
-        return new Schema(list.collect { Schema s -> s.fields }.flatten() as Collection<Field>)
+        return fromFields(list.collect { Schema s -> s.fields }.flatten() as Collection<Field>)
     }
 
     static Schema fromFields(final Collection<Field> list) {
-        return new Schema(list)
+        return new Schema(list.collectEntries { Field f -> new MapEntry(f.name, f) } as Map<String,Field>)
     }
     
     Field field(final String name) {

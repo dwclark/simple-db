@@ -1,14 +1,11 @@
 package simpledb.query
 
 import groovy.transform.CompileStatic
+import groovy.transform.Immutable
 
-@CompileStatic
+@Immutable @CompileStatic
 class IntConstant implements Constant {
-    final Integer val
-
-    IntConstant(final Integer val) {
-        this.val = val
-    }
+    Integer val
 
     @Override
     boolean equals(final Object o) {

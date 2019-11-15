@@ -76,7 +76,7 @@ class ScanSpec extends Specification {
         def lhs = new FieldNameExpression('last')
         def rhs = new ConstantExpression(new StringConstant('doo'))
         def term = new Term(lhs, rhs)
-        def pred = new Predicate(term)
+        def pred = new Predicate([term])
         def transaction = server.newTransaction()
         def tableScan = new TableScan(studentInfo, transaction)
         def selectScan = new SelectScan(tableScan, pred)
