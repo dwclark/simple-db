@@ -41,8 +41,12 @@ class Lexer {
     boolean matchKeyword(final String w) { StreamTokenizer.TT_WORD == tok.ttype && tok.sval == w }
     boolean matchId() { StreamTokenizer.TT_WORD == tok.ttype && !keywords.contains(tok.sval) }
 
-    void eatDelimiter(final char c) {
-        guard(matchDelimiter(c)) { null }
+    Lexer eatDelimiter(final char c) {
+        guard(matchDelimiter(c)) { this }
+    }
+
+    Lexer eatDelimiter(final String s) {
+        return eatDelimiter(s as char)
     }
 
     int eatIntConstant() {
@@ -53,8 +57,8 @@ class Lexer {
         guard(matchStringConstant()) { return tok.sval }
     }
 
-    void eatKeyword(final String w) {
-        guard(matchKeyword(w)) { null }
+    Lexer eatKeyword(final String w) {
+        guard(matchKeyword(w)) { this }
     }
 
     String eatId() {
