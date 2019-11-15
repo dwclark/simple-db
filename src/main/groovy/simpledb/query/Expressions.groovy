@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 import simpledb.record.Schema
 
-@CompileStatic @Immutable
+@CompileStatic @Immutable(knownImmutableClasses=[Constant])
 class ConstantExpression implements Expression {
     Constant val;
     boolean isConstant() { true }

@@ -5,7 +5,7 @@ import simpledb.query.*
 import simpledb.record.Schema
 import simpledb.record.Field
 
-@CompileStatic
+//@CompileStatic
 class Parser {
     static final char COMMA = ',' as char
     private Lexer lex
@@ -170,7 +170,7 @@ class Parser {
     }
 
     private List<String> tableList() {
-        return csv([], this.&eatId)
+        return csv([], lex.&eatId)
     }
 
     private List<String> fieldList() {
@@ -201,7 +201,7 @@ class Parser {
             lex.eatKeyword("int")
             return Field.newInt(fieldName)
         }
-        else if(lex.eatKeyword('varchar')) {
+        else if(lex.matchKeyword('varchar')) {
             int strLength = lex.eatKeyword('varchar').eatDelimiter('(').eatIntConstant()
             lex.eatDelimiter(')')
             return Field.newString(fieldName, strLength)

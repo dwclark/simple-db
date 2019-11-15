@@ -2,7 +2,7 @@ package simpledb.query;
 
 import simpledb.record.Schema;
 
-interface Expression {
+public interface Expression {
     boolean isConstant();
     boolean isFieldName();
     Constant asConstant();
