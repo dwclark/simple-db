@@ -20,7 +20,8 @@ class Predicate implements java.util.function.Predicate<Scan> {
     }
     
     boolean test(final Scan s) {
-        return terms.every { Term t -> t.test(s) }
+        if(this.is(EMPTY)) return true
+        else return terms.every { Term t -> t.test(s) }
     }
 
     int reductionFactor(Plan p) {

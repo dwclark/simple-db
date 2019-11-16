@@ -7,6 +7,9 @@ import simpledb.buffer.BufferManager
 import simpledb.tx.concurrency.LockTable
 import simpledb.tx.Transaction
 import simpledb.metadata.MetadataManager
+import simpledb.plan.Planner
+import simpledb.plan.BasicQueryPlanner
+import simpledb.plan.BasicUpdatePlanner
 
 @CompileStatic
 class Server {
@@ -16,6 +19,7 @@ class Server {
     final BufferManager bufferManager
     final LockTable lockTable
     final MetadataManager metadataManager
+    final Planner planner
     
     Server(final Config config) {
         this.config = config
@@ -32,6 +36,9 @@ class Server {
         else {
             this.metadataManager = null
         }
+
+        this.planner = new Planner(new BasicQueryPlanner(metadataManager),
+                                   new BasicUpdatePlanner(metadataManager))
     }
     
     Server() {
