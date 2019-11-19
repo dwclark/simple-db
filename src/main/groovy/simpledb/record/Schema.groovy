@@ -91,7 +91,7 @@ class TableInfo {
         return "${tableName}.tbl"
     }
 
-    int offset(final fieldName) {
+    int offset(final String fieldName) {
         final Integer off = offsets.get(fieldName)
         if(off == null) {
             throw new UnknownFieldException("${fieldName} is not found")
