@@ -1,18 +1,16 @@
 package simpledb.index.btree
 
 import groovy.transform.CompileStatic
+import java.sql.Types
 import simpledb.buffer.PageFormatter
 import simpledb.file.*
+import simpledb.query.*
 import simpledb.record.*
 import simpledb.tx.Transaction
-import simpledb.query.*
-import java.sql.Types
+import static simpledb.index.Index.*
 
 @CompileStatic
 class BPTreePage {
-    private static final String BLOCK = "block"
-    private static final String ID = "id"
-    private static final String DATAVAL = "dataval"
     
     final TableInfo ti
     final Transaction tx

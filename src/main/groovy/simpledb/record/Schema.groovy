@@ -11,6 +11,10 @@ class Field {
     String name
     int type, length
 
+    Field changeName(final String name) {
+        return new Field(name, type, length)
+    }
+    
     static Field newInt(final String name) {
         return new Field(name, Types.INTEGER, 0)
     }
@@ -30,6 +34,10 @@ class Schema {
 
     static Schema fromFields(final Collection<Field> list) {
         return new Schema(list.collectEntries { Field f -> new MapEntry(f.name, f) } as Map<String,Field>)
+    }
+
+    static Schema fromFields(final Field... fields) {
+        return fromFields(Arrays.asList(fields))
     }
     
     Field field(final String name) {

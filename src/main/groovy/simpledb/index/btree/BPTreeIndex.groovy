@@ -2,9 +2,11 @@ package simpledb.index.btree
 
 import groovy.transform.CompileStatic
 import java.sql.Types
+import java.util.function.IntBinaryOperator
 import simpledb.buffer.PageFormatter
 import simpledb.file.*
 import simpledb.index.Index
+import simpledb.index.IndexFactory
 import simpledb.query.*
 import simpledb.record.*
 import simpledb.tx.Transaction
@@ -25,7 +27,7 @@ class BPTreeIndex implements Index {
             tx.append(leafTi.fileName, new BPTreeRecordFormatter(-1, leafTi, tx.bufferManager.fileManager.pageSize))
         }
 
-        Schema dirSchema = Schema.fromFields([leafSchema.field("block"), leafSchema.field("dataval")])
+        Schema dirSchema = Schema.fromFields(leafSchema.field(BLOCK), leafSchema.field(DATAVAL))
         String dirTable = indexName + "dir"
         dirTi = new TableInfo(dirTable, dirSchema)
         rootBlock = new Block(dirTi.fileName, 0)
@@ -35,7 +37,7 @@ class BPTreeIndex implements Index {
 
         BPTreePage page = new BPTreePage(rootBlock, dirTi, tx)
         if(page.numberRecords == 0) {
-            int type = dirSchema.field("dataval").type
+            int type = dirSchema.field(DATAVAL).type
             Constant minVal = (type == Types.INTEGER) ? new IntConstant(Integer.MIN_VALUE) : new StringConstant("")
             page.insertDir(0, minVal, 0)
         }
@@ -87,7 +89,15 @@ class BPTreeIndex implements Index {
         leaf?.close()
     }
 
-    static int searchCost(int numberBlocks, int rpb) {
-        return 1 + (int) (Math.log(numberBlocks) / Math.log(rpb))
+    final static IntBinaryOperator COST = new IntBinaryOperator() {
+        int applyAsInt(final int numberBlocks, final int rpb) {
+            return 1 + (int) (Math.log(numberBlocks) / Math.log(rpb))
+        }
+    }
+
+    final static IndexFactory FACTORY = new IndexFactory() {
+        Index create(final String indexName, final Schema schema, final Transaction tx) {
+            return new BPTreeIndex(indexName, schema, tx)
+        }
     }
 }

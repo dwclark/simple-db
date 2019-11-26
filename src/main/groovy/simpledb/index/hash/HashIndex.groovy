@@ -1,6 +1,8 @@
 package simpledb.index.hash
 
+import java.util.function.IntBinaryOperator
 import simpledb.index.Index
+import simpledb.index.IndexFactory
 import simpledb.query.Constant
 import simpledb.query.Scan
 import simpledb.query.TableScan
@@ -32,7 +34,7 @@ class HashIndex implements Index {
 
     boolean next() {
         while(scan.next()) {
-            if(scan.getVal('dataval') == searchKey) {
+            if(scan.getVal(DATAVAL) == searchKey) {
                 return true
             }
         }
@@ -41,8 +43,8 @@ class HashIndex implements Index {
     }
 
     RID getDataRid() {
-        int blockNumber = ts.getInt("block")
-        int id = ts.getInt("id")
+        int blockNumber = ts.getInt(BLOCK)
+        int id = ts.getInt(ID)
         return new RID(blockNumber, id)
     }
 
@@ -50,9 +52,9 @@ class HashIndex implements Index {
         beforeFirst(val)
         ts.with {
             insert()
-            setInt("block", rid.blockNumber)
-            setInt("id", rid.id)
-            setVal("dataval", val)
+            setInt(BLOCK, rid.blockNumber)
+            setInt(ID, rid.id)
+            setVal(DATAVAL, val)
         }
     }
 
@@ -70,7 +72,15 @@ class HashIndex implements Index {
         ts?.close()
     }
 
-    static int searchCost(int numBlocks, int rpb){
-        return numBlocks / BUCKETS
+    final static IntBinaryOperator COST = new IntBinaryOperator() {
+        int applyAsInt(final int numberBlocks, final int rpb) {
+            return numberBlocks / BUCKETS
+        }
+    }
+
+    final static IndexFactory FACTORY = new IndexFactory() {
+        Index create(final String indexName, final Schema schema, final Transaction tx) {
+            return new HashIndex(indexName, schema, tx)
+        }
     }
 }
