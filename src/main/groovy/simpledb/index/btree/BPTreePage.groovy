@@ -85,7 +85,7 @@ class BPTreePage {
         setInt slot, BLOCK, blockNumber
     }
 
-    RID dataRid(final int slot) {
+    RID getDataRid(final int slot) {
         return new RID(getInt(slot, BLOCK), getInt(slot, ID))
     }
     
