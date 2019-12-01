@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 class Lexer {
-    static final Set<String> keywords = (['select', 'from', 'where',
+    static final Set<String> keywords = (['select', 'from', 'where', 'using',
                                           'and', 'insert', 'into', 'values', 'int',
                                           'varchar', 'update', 'set', 'delete', 'on',
                                           'create', 'table', 'view', 'as', 'index'] as Set).asImmutable()

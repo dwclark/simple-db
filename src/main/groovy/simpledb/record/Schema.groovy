@@ -113,15 +113,15 @@ class TableInfo {
 @ToString(includePackage=false, includeNames=true)
 @EqualsAndHashCode
 class StatisticsInfo {
-    final int numberBlocks
-    final int numberRecords
+    final int blocksAccessed
+    final int recordsOutput
 
     StatisticsInfo(final int numberBlocks, final int numberRecords) {
-        this.numberBlocks = numberBlocks
-        this.numberRecords = numberRecords
+        blocksAccessed = numberBlocks
+        recordsOutput = numberRecords
     }
 
     int distinctValues(final String fieldName) {
-        return 1 + (int) (numberRecords / 3)
+        return 1 + (int) (recordsOutput / 3)
     }
 }

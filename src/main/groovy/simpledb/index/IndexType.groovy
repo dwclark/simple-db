@@ -35,4 +35,17 @@ enum IndexType {
             throw new IllegalArgumentException()
         }
     }
+
+    static IndexType fromDescription(final String description) {
+        final String lookFor = description.toLowerCase()
+        if(lookFor == BTREE.description) {
+            return BTREE
+        }
+        else if(lookFor == HASH.description) {
+            return HASH
+        }
+        else {
+            throw new IllegalArgumentException()
+        }
+    }
 }

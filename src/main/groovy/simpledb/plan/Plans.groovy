@@ -43,12 +43,12 @@ class SelectPlan implements Plan {
         return parent.schema
     }
 
-    int getNumberBlocks() {
-        return parent.numberBlocks
+    int getBlocksAccessed() {
+        return parent.blocksAccessed
     }
 
-    int getNumberRecords() {
-        return (int) (parent.numberRecords / predicate.reductionFactor(parent))
+    int getRecordsOutput() {
+        return (int) (parent.recordsOutput / predicate.reductionFactor(parent))
     }
 
     int distinctValues(final String fieldName) {
@@ -56,7 +56,7 @@ class SelectPlan implements Plan {
             return 1
         }
         else {
-            return Math.min(parent.distinctValues(fieldName), numberRecords)
+            return Math.min(parent.distinctValues(fieldName), recordsOutput)
         }
     }
 }
@@ -94,12 +94,12 @@ class ProductPlan implements Plan {
         return new ProductScan(first.open(), second.open())
     }
 
-    int getNumberBlocks() {
-        return first.numberBlocks + (first.numberBlocks * second.numberBlocks)
+    int getBlocksAccessed() {
+        return first.blocksAccessed + (first.recordsOutput * second.blocksAccessed)
     }
 
-    int getNumberRecords() {
-        return first.numberRecords + second.numberRecords
+    int getRecordsOutput() {
+        return first.recordsOutput * second.recordsOutput
     }
 
     int distinctValues(final String fieldName) {

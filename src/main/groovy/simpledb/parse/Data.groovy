@@ -2,6 +2,7 @@ package simpledb.parse
 
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
+import simpledb.index.IndexType
 import simpledb.query.Constant
 import simpledb.query.Expression
 import simpledb.query.Predicate
@@ -9,6 +10,7 @@ import simpledb.record.Schema
 
 @CompileStatic @Immutable
 class CreateIndexData {
+    IndexType indexType
     String indexName, tableName, fieldName
 }
 

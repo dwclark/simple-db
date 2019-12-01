@@ -1,6 +1,7 @@
 package simpledb.parse
 
 import groovy.transform.CompileStatic
+import simpledb.index.IndexType
 import simpledb.query.*
 import simpledb.record.Schema
 import simpledb.record.Field
@@ -146,7 +147,13 @@ class Parser {
         lex.eatDelimiter('(')
         String fieldName = field()
         lex.eatDelimiter(')')
-        return new CreateIndexData(indexName, tableName, fieldName)
+        IndexType indexType = IndexType.BTREE
+        if(lex.matchKeyword('using')) {
+            lex.eatKeyword('using')
+            indexType = IndexType.fromDescription(lex.eatId())
+        }
+        
+        return new CreateIndexData(indexType, indexName, tableName, fieldName)
     }
 
     Object create() {

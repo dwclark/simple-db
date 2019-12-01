@@ -5,8 +5,8 @@ import simpledb.record.Schema;
 
 public interface Plan {
     Scan open();
-    int getNumberBlocks();
-    int getNumberRecords();
+    int getBlocksAccessed();
+    int getRecordsOutput();
     int distinctValues(String fieldName);
     Schema getSchema();
 }

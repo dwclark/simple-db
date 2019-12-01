@@ -15,11 +15,11 @@ class IndexInfo {
     final String fieldName
     final IndexType type
 
-    IndexInfo(final String indexName, final String fieldName, final int indexType,
+    IndexInfo(final String indexName, final String fieldName, final IndexType type,
               final Transaction tx, final TableInfo tableInfo, final StatisticsInfo statisticsInfo) {
         this.indexName = indexName
         this.fieldName = fieldName
-        this.type = IndexType.fromId(indexType)
+        this.type = type
         this.tx = tx
         this.tableInfo = tableInfo
         this.statisticsInfo = statisticsInfo
@@ -29,14 +29,14 @@ class IndexInfo {
         return type.factory.create(indexName, schema, tx)
     }
     
-    int getNumberBlocks() {
+    int getBlocksAccessed() {
         int rpb = (int) (tx.bufferManager.fileManager.pageSize / tableInfo.recordLength)
-        int numberBlocks = (int) (statisticsInfo.numberRecords / rpb)
+        int numberBlocks = (int) (statisticsInfo.recordsOutput / rpb)
         return type.cost.applyAsInt(numberBlocks, rpb)
     }
 
-    int getNumberRecords() {
-        return (int) (statisticsInfo.numberRecords / statisticsInfo.distinctValues(fieldName))
+    int getRecordsOutput() {
+        return (int) (statisticsInfo.recordsOutput / statisticsInfo.distinctValues(fieldName))
     }
 
     int distinctValues(final String fname) {
@@ -44,7 +44,7 @@ class IndexInfo {
             return 1
         }
         else {
-            return Math.min(statisticsInfo.distinctValues(fname), numberRecords)
+            return Math.min(statisticsInfo.distinctValues(fname), recordsOutput)
         }
     }
 

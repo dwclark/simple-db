@@ -93,7 +93,8 @@ class BasicUpdatePlanner implements UpdatePlanner {
     }
     
     int execute(final CreateIndexData data, final Transaction tx) {
-        //TODO: implement index creation
+        metadataManager.createIndex(data.indexType, data.indexName, data.tableName,
+                                    data.fieldName, tx)
         return 0
     }
 }
